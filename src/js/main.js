@@ -66,19 +66,19 @@ var floor,
   rotor_mixer,
   wind_mixer,
   particles = [],
-  // RESISTANCE_FORCE =
   collidableMeshList = [],
   rotateact,
   mesh,
   skeleton,
   meshes = [],
-  SPEED = 5,
+  CO_OF_FRICTION = 1.35, // equivalent to coefficient of friction
+  MAX_ROTOR_SPEED = 1000,
   settings,
   classes,
   totalObjects = 100,
   airDensity = 1.225, // kg/m^3
   particleCoverage = 15.2, // Area of single air particle (m^2)
-  particleVelocity = 5; // m/s
+  particleVelocity = 10; // m/s
 
 ////////////////////////////////////////////////
 //                           ENERGY MANAGER
@@ -87,8 +87,7 @@ var floor,
 energy = {
   power: 0,
   updateElectricity: function () {
-    console.log("UPDATING ELECTRICITY");
-    energy.power += 0.5 * airDensity * particleVelocity;
+    energy.power += 0.5 * airDensity * particleCoverage * particleVelocity;
     energyEl.innerHTML =
       "Energy: " + (energy.power).toFixed(2);
   },
@@ -123,12 +122,14 @@ function initGUI() {
     "Particle Velocity": particleVelocity,
   };
   folder
-    .add(settings, "Particle Velocity", 0.0, 100.0)
+    .add(settings, "Particle Velocity", 0.0, 100.0, 0.5)
     .onChange(modifyParticleVelocity);
   folder.__controllers[0].listen();
-  folder.add(settings, "Air Density", 0.0, 5.0).onChange(modifyAirDensity);
   folder
-    .add(settings, "Air Particle Coverage", 0.0, 200.0)
+    .add(settings, "Air Density", 0.0, 5.0, 0.5)
+    .onChange(modifyAirDensity);
+  folder
+    .add(settings, "Air Particle Coverage", 0.0, 200.0, 0.5)
     .onChange(modifyAirParticleConverage);
   folder.open();
 }
@@ -193,10 +194,22 @@ function handleWindowResize() {
   camera.updateProjectionMatrix();
 }
 
+function applyFriction(delta) {
+  newTimescale = rotor_mixer.timeScale - (CO_OF_FRICTION * 200 * delta);
+  if (newTimescale < 0)
+    rotor_mixer.timeScale = 0;
+  else
+    rotor_mixer.timeScale = newTimescale;
+}
+
+function increaseRotorSpeed() {
+  if (rotor_mixer.timeScale < MAX_ROTOR_SPEED) 
+    rotor_mixer.timeScale += Math.sqrt((airDensity * particleCoverage * Math.pow(particleVelocity,3)) / 2000) * 5;
+}
+
 // Control of wind speed
 function modifyParticleVelocity(speed) {
   particleVelocity = speed;
-  rotor_mixer.timeScale = speed;
 }
 
 function modifyAirDensity(density) {
@@ -207,11 +220,6 @@ function modifyAirParticleConverage(converage) {
   createWind();
   particleCoverage = converage;
 }
-
-// function updateDirection() {
-//   winddirEl.innerHTML = "Direction: " + settings["Wind direction"];
-//   modifyTimeScale(settings["Wind speed"]);
-// }
 
 function mouseDownHandler(event) {
   mouseDown = true;
@@ -340,7 +348,7 @@ function createWG(geometry, materials) {
   scene.add(skeleton);
 
   rotor_mixer = new THREE.AnimationMixer(mesh);
-  rotor_mixer.timeScale = 15;
+  rotor_mixer.timeScale = rotor_mixer.timeScale += Math.sqrt((airDensity * particleCoverage * Math.pow(particleVelocity,3)) / 2000) * 5;
 
   //approach for r73
   rotateact = new THREE.AnimationAction(geometry.animations[0]);
@@ -402,6 +410,11 @@ function loop() {
 
   var delta = clock.getDelta();
   if (rotor_mixer) {
+    if (rotor_mixer.timeScale > 0) {
+      applyFriction(delta);
+    } else if (rotor_mixer.timeScale < 0)
+      rotor_mixer.timeScale = 0;
+    
     rotor_mixer.update(delta);
     skeleton.update();
 
@@ -418,9 +431,7 @@ function loop() {
 
     var originPoint = mesh.position.clone();
 
-    for (
-      var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++
-    ) {
+    for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++) {
       var localVertex = mesh.geometry.vertices[vertexIndex].clone();
       var globalVertex = localVertex.applyMatrix4(mesh.matrix);
       var directionVector = globalVertex.sub(mesh.position);
@@ -436,9 +447,8 @@ function loop() {
       ) {
         if (!collisionResults[0].object.userData["hit"]) {
           collisionResults[0].object.userData["hit"] = true;
-          console.log(collisionResults[0].object.userData["hit"]);
-          console.log("HIT!");
           energy.updateElectricity();
+          increaseRotorSpeed();
         }
       }
     }
