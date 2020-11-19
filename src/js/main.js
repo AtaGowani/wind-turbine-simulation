@@ -320,7 +320,7 @@ function createWind() {
 function createWG(geometry, materials) {
   var material = new THREE.MeshBasicMaterial(materials);
   material.map = THREE.ImageUtils.loadTexture(
-    "/src/img/textures/BrushedMetal.jpg"
+    "./src/img/textures/BrushedMetal.jpg"
   );
   material.side = THREE.DoubleSide;
   material.skinning = true;
