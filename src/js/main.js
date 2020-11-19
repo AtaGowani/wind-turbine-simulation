@@ -383,7 +383,7 @@ function init(event) {
   createFloor();
   createWind();
   var loader = new THREE.JSONLoader();
-  loader.load("/src/obj/WindGenerator.json", createWG);
+  loader.load("./src/obj/WindGenerator.json", createWG);
   loop();
 }
 
