@@ -72,10 +72,10 @@ var floor,
   skeleton,
   meshes = [],
   CO_OF_FRICTION = 1.35, // equivalent to coefficient of friction
-  MAX_ROTOR_SPEED = 1000,
+  MAX_ROTOR_SPEED = 100,
   settings,
   classes,
-  totalObjects = 100,
+  totalObjects = 200,
   airDensity = 1.225, // kg/m^3
   particleCoverage = 15.2, // Area of single air particle (m^2)
   particleVelocity = 10; // m/s
@@ -122,7 +122,7 @@ function initGUI() {
     "Particle Velocity": particleVelocity,
   };
   folder
-    .add(settings, "Particle Velocity", 0.0, 100.0, 0.5)
+    .add(settings, "Particle Velocity", 0.0, 50.0, 0.5)
     .onChange(modifyParticleVelocity);
   folder.__controllers[0].listen();
   folder
@@ -195,7 +195,7 @@ function handleWindowResize() {
 }
 
 function applyFriction(delta) {
-  newTimescale = rotor_mixer.timeScale - (CO_OF_FRICTION * 200 * delta);
+  newTimescale = rotor_mixer.timeScale - (CO_OF_FRICTION * 100 * delta);
   if (newTimescale < 0)
     rotor_mixer.timeScale = 0;
   else
