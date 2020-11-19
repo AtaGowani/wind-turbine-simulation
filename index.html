@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>WindGenerator using Three.js</title>
+
+	<!-- source files -->
+
+	<link rel="stylesheet" href="src/css/main.css">
+	<link rel="stylesheet" href="src/css/loader.css">
+
+	<script src="src/vendor/js/three.js"></script>
+	<script src="src/vendor/js/TweenMax.min.js"></script>
+	<script src="src/vendor/js/dat.gui.min.js"></script>
+
+	<script src="src/js/Math2.js"></script>
+	<script src="src/js/GeometryHelpers.js"></script>
+	<script src="src/js/scene_colors.js"></script>
+	<script src="src/js/OrbitControls.js"></script>
+	<script src="src/js/CustomMeshFlat.js"></script>
+	
+	<script src="src/js/main.js"></script>
+</head>
+
+<body>
+	<span id="err"></span>
+	<div id="world">
+		<div class="controls">
+			<div class="batteryStats">
+				<div id="energy">Energy: 0 kW*h</div>
+				<div id="capacity">Capacity: 1 MW</div>
+				<div id="electro">Electricity: off</div>
+				<div id="usage">Battery usage: 4.5 KW*H</div>
+				<div id="windspeed">Wind speed: 3 km/h</div>
+				<div id="winddir">Direction: NORTH</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
