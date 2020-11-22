@@ -1,4 +1,4 @@
-//Help functions
+// Helper functions
 function $(id) {
   return document.getElementById(id);
 }
@@ -20,7 +20,7 @@ function switchVisibility(arr, num, visibility) {
 }
 
 ////////////////////////////////////////////////
-//                  THREE JS RELATED VARIABLES
+// THREE JS RELATED VARIABLES
 ////////////////////////////////////////////////
 
 var scene,
@@ -36,7 +36,7 @@ var scene,
   clock = new THREE.Clock();
 
 ////////////////////////////////////////////////
-//                      SCREEN & MOUSE VARIABLES
+// SCREEN & MOUSE VARIABLES
 ////////////////////////////////////////////////
 
 var HEIGHT,
@@ -53,13 +53,13 @@ var HEIGHT,
   };
 
 ////////////////////////////////////////////////
-//                          DOM VARIABLES
+// DOM VARIABLES
 ////////////////////////////////////////////////
 
 var energyEl, windspeedEl;
 
 ////////////////////////////////////////////////
-//                           3D MODELS VARIABLES
+// 3D MODELS VARIABLES
 ////////////////////////////////////////////////
 
 var floor,
@@ -80,7 +80,7 @@ var floor,
   particleVelocity = 10; // m/s
 
 ////////////////////////////////////////////////
-//                           ENERGY MANAGER
+// ENERGY MANAGER
 ////////////////////////////////////////////////
 
 energy = {
@@ -93,21 +93,8 @@ energy = {
 };
 
 ////////////////////////////////////////////////
-//                                   STATS & GUI
+// INIT GUI
 ////////////////////////////////////////////////
-
-var stats;
-var parameters = {
-  truncHeight: 100,
-  truncThickness: 4,
-  truncColor: Colors.grey_d,
-  truncNoise: 0.5,
-  foliageColor: "pinks",
-  foliageDensity: 5,
-  foliageNoise: 0.05,
-  foliageSize: 10,
-  animationSpeed: 2.5,
-};
 
 function initGUI() {
   var panel = new dat.GUI({
@@ -134,7 +121,7 @@ function initGUI() {
 }
 
 ////////////////////////////////////////////////
-//                  INIT THREE JS, MOUSE, SCREEN
+// INIT THREE JS, MOUSE, SCREEN
 ////////////////////////////////////////////////
 
 function initCore() {
@@ -180,7 +167,7 @@ function initCore() {
 }
 
 ////////////////////////////////////////////////
-//                  MOUSE EVENTS / SCREEN EVENTS
+// HANDLE WINDOW EVENTS
 ////////////////////////////////////////////////
 
 function handleWindowResize() {
@@ -192,6 +179,10 @@ function handleWindowResize() {
   camera.aspect = WIDTH / HEIGHT;
   camera.updateProjectionMatrix();
 }
+
+////////////////////////////////////////////////
+// WIND TURBINE CONTROLLER FUNCTIONS
+////////////////////////////////////////////////
 
 function applyFriction(delta) {
   newTimescale = rotor_mixer.timeScale - (CO_OF_FRICTION * 100 * delta);
@@ -206,7 +197,6 @@ function increaseRotorSpeed() {
     rotor_mixer.timeScale += Math.sqrt((airDensity * particleCoverage * Math.pow(particleVelocity,3)) / 2000) * 5;
 }
 
-// Control of wind speed
 function modifyParticleVelocity(speed) {
   particleVelocity = speed;
 }
@@ -219,6 +209,10 @@ function modifyAirParticleConverage(converage) {
   createWind();
   particleCoverage = converage;
 }
+
+////////////////////////////////////////////////
+// MOUSE EVENTS HANDLER
+////////////////////////////////////////////////
 
 function mouseDownHandler(event) {
   mouseDown = true;
@@ -246,7 +240,7 @@ function handleTouchMove(event) {
 }
 
 ////////////////////////////////////////////////
-//                                        RENDER
+// RENDER
 ////////////////////////////////////////////////
 
 function render() {
@@ -255,7 +249,7 @@ function render() {
 }
 
 ////////////////////////////////////////////////
-//                                        LIGHTS
+// LIGHTS
 ////////////////////////////////////////////////
 var shadowLight, backLight;
 
@@ -268,7 +262,7 @@ function createLights() {
   scene.add(shadowLight);
 }
 ////////////////////////////////////////////////
-//                                        FLOOR
+// FLOOR
 ////////////////////////////////////////////////
 var Floor = function () {
   var floorCol = Colors.green_d;
@@ -287,7 +281,7 @@ var Floor = function () {
 };
 
 ////////////////////////////////////////////////
-//                                 CREATE MODELS
+// CREATE MODELS
 ////////////////////////////////////////////////
 
 // Air Particles
@@ -323,7 +317,7 @@ function createWind() {
   wind_mixer.timeScale = 15;
 }
 
-// Windmill & Animation
+// Wind turbine & Animation
 function createWG(geometry, materials) {
   var material = new THREE.MeshBasicMaterial(materials);
   material.map = THREE.ImageUtils.loadTexture(
