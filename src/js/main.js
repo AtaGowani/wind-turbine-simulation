@@ -89,7 +89,7 @@ energy = {
   updateElectricity: function () {
     energy.power += 0.5 * airDensity * particleCoverage * particleVelocity;
     energyEl.innerHTML =
-      "Energy: " + (energy.power).toFixed(2);
+      "Energy: " + (energy.power).toFixed(2) + " Watts";
   },
 };
 
