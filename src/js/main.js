@@ -56,7 +56,7 @@ var HEIGHT,
 //                          DOM VARIABLES
 ////////////////////////////////////////////////
 
-var energyEl, electroEl, errEl, windspeedEl, winddirEl;
+var energyEl, windspeedEl;
 
 ////////////////////////////////////////////////
 //                           3D MODELS VARIABLES
@@ -74,7 +74,6 @@ var floor,
   CO_OF_FRICTION = 1.35, // equivalent to coefficient of friction
   MAX_ROTOR_SPEED = 100,
   settings,
-  classes,
   totalObjects = 200,
   airDensity = 1.225, // kg/m^3
   particleCoverage = 15.2, // Area of single air particle (m^2)
@@ -112,7 +111,7 @@ var parameters = {
 
 function initGUI() {
   var panel = new dat.GUI({
-    width: 310
+    width: 500
   });
 
   var folder = panel.addFolder("Controls");
@@ -372,18 +371,7 @@ window.addEventListener("load", init, false);
 
 function init(event) {
   energyEl = $("energy");
-  electroEl = $("electro");
-  errEl = $("err");
   windspeedEl = $("windspeed");
-  winddirEl = $("winddir");
-  classes = [
-    $c("perc red0"),
-    $c("perc red1"),
-    $c("perc red2"),
-    $c("perc green0"),
-    $c("perc green1"),
-    $c("perc green2"),
-  ];
 
   initCore();
   initGUI();
