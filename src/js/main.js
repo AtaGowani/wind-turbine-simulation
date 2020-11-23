@@ -55,8 +55,8 @@ var floor,
   mesh,
   skeleton,
   meshes = [],
-  CO_OF_FRICTION = 1.35, // equivalent to coefficient of friction
-  MAX_ROTOR_SPEED = 100,
+  CO_OF_FRICTION = 1.80, // equivalent to coefficient of friction
+  MAX_ROTOR_SPEED = 25, // ~20 RPM
   settings,
   totalObjects = 150,
   airDensity = 1.225, // kg/m^3
@@ -160,20 +160,38 @@ function handleWindowResize() {
 }
 
 ////////////////////////////////////////////////
-// WIND TURBINE CONTROLLER FUNCTIONS
+// WIND TURBINE AND WIND CONTROLLER FUNCTIONS
 ////////////////////////////////////////////////
 
+function moveWindParticles(delta) {
+  particles.forEach((particle) => {
+    particle.position.z -= (particleVelocity / 1.85) * delta; // Conversion to show real speed in graphics
+
+    var difference = particle.position.z + particle.geometry.vertices[0].z;
+
+    if (difference < -100) {
+      particle.position.z += 200;
+      particle.userData["hit"] = false; // Reset for collition detection
+    }
+  });
+}
+
 function applyFriction(delta) {
-  newTimescale = rotor_mixer.timeScale - (CO_OF_FRICTION * 100 * delta);
-  if (newTimescale < 0)
+  newTimescale = rotor_mixer.timeScale - (CO_OF_FRICTION * delta);
+  
+  if (newTimescale < 0) // Stops timeScale for ever being negative because that leads to reverse animations
     rotor_mixer.timeScale = 0;
   else
     rotor_mixer.timeScale = newTimescale;
 }
 
-function increaseRotorSpeed() {
-  if (rotor_mixer.timeScale < MAX_ROTOR_SPEED) 
-    rotor_mixer.timeScale += Math.sqrt((airDensity * particleCoverage * Math.pow(particleVelocity,3)) / 2000) * 5;
+function increaseRotorSpeed(delta) {
+  increment_by = Math.sqrt((airDensity * particleCoverage * Math.pow(particleVelocity,3)) / 2000) * 5 * delta;
+  
+  if (rotor_mixer.timeScale + increment_by < MAX_ROTOR_SPEED) 
+    rotor_mixer.timeScale += increment_by;
+  else
+    rotor_mixer.timeScale = MAX_ROTOR_SPEED;
 }
 
 function modifyParticleVelocity(speed) {
@@ -284,7 +302,7 @@ function createWind() {
 
     vertex.x = Math.random() * 25 - 10;
     vertex.y = Math.random() * 10 + 95;
-    vertex.z = Math.random() * 2000;
+    vertex.z = Math.random() * 500;
 
     geometry.vertices.push(vertex);
     particle = new THREE.Points(geometry, material);
@@ -378,45 +396,30 @@ function loop() {
 
   var delta = clock.getDelta();
   if (rotor_mixer) {
-    if (rotor_mixer.timeScale > 0) {
+    if (rotor_mixer.timeScale > 0) // If turbine is moving
       applyFriction(delta);
-    } else if (rotor_mixer.timeScale < 0)
-      rotor_mixer.timeScale = 0;
     
     rotor_mixer.update(delta);
     skeleton.update();
 
-    particles.forEach((particle) => {
-      particle.position.z -= (particleVelocity / 1.85) * delta; // Conversion to show real speed in graphics
-
-      var difference = particle.position.z + particle.geometry.vertices[0].z;
-
-      if (difference < -100) {
-        particle.position.z += 300;
-        particle.userData["hit"] = false; // Reset for collition detection
-      }
-    });
+    moveWindParticles(delta);
 
     var originPoint = mesh.position.clone();
-
-    for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++) {
+    
+    for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++) { // Go through every single verticies
       var localVertex = mesh.geometry.vertices[vertexIndex].clone();
       var globalVertex = localVertex.applyMatrix4(mesh.matrix);
       var directionVector = globalVertex.sub(mesh.position);
 
-      var ray = new THREE.Raycaster(
-        originPoint,
-        directionVector.clone().normalize()
-      );
+      var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
       var collisionResults = ray.intersectObjects(collidableMeshList);
-      if (
-        collisionResults.length > 0 &&
-        collisionResults[0].distance < directionVector.length()
-      ) {
+      
+
+      if (collisionResults.length > 0 && collisionResults[0].distance <= directionVector.length()) {
         if (!collisionResults[0].object.userData["hit"]) {
           collisionResults[0].object.userData["hit"] = true;
           energy.updateElectricity();
-          increaseRotorSpeed();
+          increaseRotorSpeed(delta);
         }
       }
     }
