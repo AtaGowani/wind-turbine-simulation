@@ -300,7 +300,7 @@ function createWind() {
     var geometry = new THREE.Geometry();
 
     vertex.x = Math.random() * 25 - 10;
-    vertex.y = Math.random() * 10 + 90;
+    vertex.y = Math.random() * 10 + 95;
     vertex.z = Math.random() * 2000;
 
     geometry.vertices.push(vertex);
