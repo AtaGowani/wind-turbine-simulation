@@ -74,9 +74,9 @@ var floor,
   CO_OF_FRICTION = 1.35, // equivalent to coefficient of friction
   MAX_ROTOR_SPEED = 100,
   settings,
-  totalObjects = 200,
+  totalObjects = 150,
   airDensity = 1.225, // kg/m^3
-  particleCoverage = 15.2, // Area of single air particle (m^2)
+  particleCoverage = 6.25, // Area of single group of air particles (m^2) with side lenght = 2.5
   particleVelocity = 10; // m/s
 
 ////////////////////////////////////////////////
@@ -104,7 +104,6 @@ function initGUI() {
   var folder = panel.addFolder("Controls");
   settings = {
     "Air Density": airDensity,
-    "Air Particle Coverage": particleCoverage,
     "Particle Velocity": particleVelocity,
   };
   folder
@@ -114,9 +113,6 @@ function initGUI() {
   folder
     .add(settings, "Air Density", 0.0, 5.0, 0.5)
     .onChange(modifyAirDensity);
-  folder
-    .add(settings, "Air Particle Coverage", 0.0, 200.0, 0.5)
-    .onChange(modifyAirParticleConverage);
   folder.open();
 }
 
@@ -199,6 +195,8 @@ function increaseRotorSpeed() {
 
 function modifyParticleVelocity(speed) {
   particleVelocity = speed;
+  windspeedEl.innerHTML =
+      "Wind Speed: " + (particleVelocity).toFixed(2) + " m/s";
 }
 
 function modifyAirDensity(density) {
@@ -206,8 +204,8 @@ function modifyAirDensity(density) {
 }
 
 function modifyAirParticleConverage(converage) {
-  createWind();
   particleCoverage = converage;
+  createWind();
 }
 
 ////////////////////////////////////////////////
@@ -293,7 +291,7 @@ function createWind() {
   });
 
   var material = new THREE.PointsMaterial({
-    size: particleCoverage / 25.0
+    size: particleCoverage / 10.0
   });
 
   // Create multiple particles and add them to the scene seperatly
@@ -301,7 +299,7 @@ function createWind() {
     var vertex = new THREE.Vector3();
     var geometry = new THREE.Geometry();
 
-    vertex.x = Math.random() * 40 - 15;
+    vertex.x = Math.random() * 30 - 10;
     vertex.y = Math.random() * 20 + 85;
     vertex.z = Math.random() * 2000;
 
@@ -374,6 +372,7 @@ function init(event) {
   createWind();
   var loader = new THREE.JSONLoader();
   loader.load("./src/obj/WindGenerator.json", createWG);
+  windspeedEl.innerHTML = "Wind Speed: " + (particleVelocity).toFixed(2) + " m/s";
   loop();
 }
 
@@ -401,12 +400,12 @@ function loop() {
     skeleton.update();
 
     particles.forEach((particle) => {
-      particle.position.z -= particleVelocity * 5 * delta;
+      particle.position.z -= (particleVelocity / 1.85) * delta; // Conversion to show real speed in graphics
 
       var difference = particle.position.z + particle.geometry.vertices[0].z;
 
-      if (difference < -1000) {
-        particle.position.z += 1500;
+      if (difference < -100) {
+        particle.position.z += 1000;
         particle.userData["hit"] = false; // Reset for collition detection
       }
     });
