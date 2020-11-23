@@ -10,7 +10,13 @@ This project uses the Three.js 3D library to create a simulation of the rotation
 
 #### Turbine Rotation
 
-#### 
+#### Energy Generation
+
+## Development
+* Clone the project `git clone https://github.com/AtaGowani/wind-turbine-simulation.git`
+* Change into project directory `cd wind-turbine-simulation`
+* Start a local server at directory root. `http-server` npm module recommended for it's ease of use
+* Redirect to `localhost` and the respective port to see the project in action
 
 ## Credit/Citations
 * Project kickstarted from [Wind-turbine-simulator3D](https://github.com/MarkShulhin/Wind-turbine-simulator3D)
