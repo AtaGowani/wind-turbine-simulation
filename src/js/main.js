@@ -7,18 +7,6 @@ function $c(classid) {
   return document.getElementsByClassName(classid);
 }
 
-function switchVisibility(arr, num, visibility) {
-  if (num > 0) {
-    for (var i = 0; i < num; i++) {
-      arr[i][0].style.visibility = visibility;
-    }
-  } else if (num < 0) {
-    for (var i = arr.length - 1; num < 0; num++, i--) {
-      arr[i][0].style.visibility = visibility;
-    }
-  }
-}
-
 ////////////////////////////////////////////////
 // THREE JS RELATED VARIABLES
 ////////////////////////////////////////////////
@@ -46,17 +34,13 @@ var HEIGHT,
   mousePos = {
     x: 0,
     y: 0
-  },
-  oldMousePos = {
-    x: 0,
-    y: 0
   };
 
 ////////////////////////////////////////////////
 // DOM VARIABLES
 ////////////////////////////////////////////////
 
-var energyEl, windspeedEl;
+var energyEl, windspeedEl, airDensityEl;
 
 ////////////////////////////////////////////////
 // 3D MODELS VARIABLES
@@ -87,8 +71,7 @@ energy = {
   power: 0,
   updateElectricity: function () {
     energy.power += 0.5 * airDensity * particleCoverage * particleVelocity;
-    energyEl.innerHTML =
-      "Energy: " + (energy.power).toFixed(2) + " Watts";
+    energyEl.innerHTML = "Energy: " + (energy.power).toFixed(2) + " Watts";
   },
 };
 
@@ -195,12 +178,12 @@ function increaseRotorSpeed() {
 
 function modifyParticleVelocity(speed) {
   particleVelocity = speed;
-  windspeedEl.innerHTML =
-      "Wind Speed: " + (particleVelocity).toFixed(2) + " m/s";
+  windspeedEl.innerHTML = "Wind Speed: " + (particleVelocity).toFixed(2) + " m/s";
 }
 
 function modifyAirDensity(density) {
   airDensity = density;
+  airDensityEl.innerHTML = "Air Density: " + (airDensity).toFixed(4) + " kg/m^3";
 }
 
 function modifyAirParticleConverage(converage) {
@@ -364,6 +347,7 @@ window.addEventListener("load", init, false);
 function init(event) {
   energyEl = $("energy");
   windspeedEl = $("windspeed");
+  airDensityEl = $("airdensity")
 
   initCore();
   initGUI();
@@ -372,7 +356,10 @@ function init(event) {
   createWind();
   var loader = new THREE.JSONLoader();
   loader.load("./src/obj/WindGenerator.json", createWG);
+
   windspeedEl.innerHTML = "Wind Speed: " + (particleVelocity).toFixed(2) + " m/s";
+  airDensityEl.innerHTML = "Air Density: " + (airDensity).toFixed(4) + " kg/m^3";
+
   loop();
 }
 
