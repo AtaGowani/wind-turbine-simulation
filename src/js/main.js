@@ -299,8 +299,8 @@ function createWind() {
     var vertex = new THREE.Vector3();
     var geometry = new THREE.Geometry();
 
-    vertex.x = Math.random() * 30 - 10;
-    vertex.y = Math.random() * 20 + 85;
+    vertex.x = Math.random() * 25 - 10;
+    vertex.y = Math.random() * 10 + 90;
     vertex.z = Math.random() * 2000;
 
     geometry.vertices.push(vertex);
@@ -405,7 +405,7 @@ function loop() {
       var difference = particle.position.z + particle.geometry.vertices[0].z;
 
       if (difference < -100) {
-        particle.position.z += 1000;
+        particle.position.z += 300;
         particle.userData["hit"] = false; // Reset for collition detection
       }
     });
