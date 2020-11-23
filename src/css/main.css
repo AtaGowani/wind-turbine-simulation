@@ -49,3 +49,9 @@ canvas {
   margin-top: 45px;
   margin-left: 25px;
 }
+
+#airdensity {
+  position: absolute;
+  margin-top: 65px;
+  margin-left: 25px;
+}
