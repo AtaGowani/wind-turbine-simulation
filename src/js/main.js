@@ -269,13 +269,13 @@ var Floor = function () {
   var vertices = this.mesh.geometry.vertices;
   for (var i = 0; i < vertices.length; i++) {
     var v = vertices[i];
-    v.x += Math2.rangeRandom(-10, 10);
-    v.y += Math2.rangeRandom(-10, 10);
-    v.z += Math2.rangeRandom(-10, 10);
+    v.x += Math2.rangeRandom(0, 20);
+    v.y += Math2.rangeRandom(0, 20);
+    v.z += Math2.rangeRandom(0, 20);
   }
   this.mesh.geometry.computeFaceNormals();
   this.mesh.geometry.verticesNeedUpdate = true;
-  this.mesh.geometry.colorsNeedUpdate = true;
+  // this.mesh.geometry.colorsNeedUpdate = true;
   this.mesh.rotation.x = -Math.PI / 2;
 };
 
