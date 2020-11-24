@@ -1,6 +1,6 @@
 {
     "animations":[{
-        "length":70,
+        "length":68,
         "fps":24,
         "name":"Rotation",
         "hierarchy":[{
