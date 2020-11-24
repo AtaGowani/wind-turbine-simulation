@@ -56,7 +56,7 @@ var floor,
   skeleton,
   meshes = [],
   CO_OF_FRICTION = 1.80, // equivalent to coefficient of friction
-  MAX_ROTOR_SPEED = 25, // ~20 RPM
+  MAX_ROTOR_SPEED = 45,
   settings,
   totalObjects = 150,
   airDensity = 1.225, // kg/m^3
@@ -340,7 +340,7 @@ function createWG(geometry, materials) {
   scene.add(skeleton);
 
   rotor_mixer = new THREE.AnimationMixer(mesh);
-  rotor_mixer.timeScale = rotor_mixer.timeScale += Math.sqrt((airDensity * particleCoverage * Math.pow(particleVelocity,3)) / 2000) * 5;
+  rotor_mixer.timeScale = 0;
 
   //approach for r73
   rotateact = new THREE.AnimationAction(geometry.animations[0]);
